@@ -4,8 +4,10 @@ import glob
 from time import sleep 
 import pickle 
 
-frames_to_capture = 30 
+frames_to_capture = 60 
 counter = 0 
+camera_index = 1
+ # 0 for webcam, 1 for arena cam 
  
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -20,7 +22,7 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
  
 cv.namedWindow("Test Calibration")
-vc = cv.VideoCapture(0)
+vc = cv.VideoCapture(camera_index)
 vc.set(cv.CAP_PROP_FRAME_WIDTH, 640)
 vc.set(cv.CAP_PROP_FRAME_HEIGHT, 480)
 
@@ -68,7 +70,7 @@ print("Distortion coefficients:\n", dist)
 print("Showing undistort image")
 
 cv.namedWindow("Undistorted")
-vc = cv.VideoCapture(0)
+vc = cv.VideoCapture(camera_index)
 if vc.isOpened(): 
     _rval, _frame = vc.read() 
 while _rval: 
@@ -80,6 +82,8 @@ while _rval:
     if key == 27: # exit on ESC
         break
 
+
+cv.destroyAllWindows()
 overwrite = input("Overwrite calibration files?y/n")
 if overwrite == 'y': 
     # Save camera matrix and distortion coefficients
@@ -89,4 +93,3 @@ if overwrite == 'y':
         pickle.dump(calibration_data, f)
 
     print("Calibration saved to camera_calibration.pkl")
-cv.destroyAllWindows()

@@ -1,5 +1,13 @@
 import cv2
 import numpy as np 
+import pickle 
+
+def load_calibration(path="camera_calibration.pkl"):
+    with open("camera_calibration.pkl", "rb") as f:
+        data = pickle.load(f)
+        mtx = data["mtx"]
+        dist = data["dist"]
+    return mtx, dist 
 
 def get_heading(corner): 
     _corner = corner[0]
@@ -15,8 +23,10 @@ def get_heading(corner):
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
     vc = cv2.VideoCapture(1)
-    vc.set(cv.CAP_PROP_FRAME_WIDTH, 640)
-    vc.set(cv.CAP_PROP_FRAME_HEIGHT, 480) 
+    vc.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    vc.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) 
+
+    mtx, dist = load_calibration()
 
     detectorParams = cv2.aruco.DetectorParameters()
     detectorDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -70,6 +80,7 @@ def get_data(corner_data, model):
         cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, frame = vc.read()
+        frame = cv2.undistort(frame, mtx, dist, None)
         #frame = cv2.absdiff(frame, background)
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC
