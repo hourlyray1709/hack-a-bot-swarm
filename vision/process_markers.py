@@ -14,7 +14,9 @@ def get_heading(corner):
 
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(0) 
+    vc = cv2.VideoCapture(1)
+    vc.set(cv.CAP_PROP_FRAME_WIDTH, 640)
+    vc.set(cv.CAP_PROP_FRAME_HEIGHT, 480) 
 
     detectorParams = cv2.aruco.DetectorParameters()
     detectorDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -36,11 +38,12 @@ def get_data(corner_data, model):
     while rval:                        # while we have camera input 
         corners, ids, rejected = detector.detectMarkers(frame)    # corners[i][0] = top left corner of marker i
         if ids is not None:
-            for i in range(len(ids)): 
-                if ids[i] == 4: 
-                    print("Target Hit")
-                    print(corners[i])
-                    corner_data.target = corners[i]
+            #for i in range(len(ids)): 
+                #if ids[i] == 4: 
+                    #print("Target Hit")
+                    #print(corners[i])
+                    #corner_data.target = corners[i]
+            corner_data.target=[[400, 400], [400, 400], [400, 400], [400, 400]]
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
 
 

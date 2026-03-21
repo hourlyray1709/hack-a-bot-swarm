@@ -84,7 +84,7 @@ class CornerData:
 
 
 if __name__ == "__main__":
-    model = YOLO('yolov8s.pt')
+    model = YOLO('yolov8n.pt')
     corner_data = CornerData()
     coordinator = SwarmCoordinator(bot_ids=[1, 2, 3])
     thread1 = Thread(target=get_data, args=(corner_data,model))
