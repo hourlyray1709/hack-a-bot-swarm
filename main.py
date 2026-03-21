@@ -1,10 +1,16 @@
 # the file we run when we connect to the camera 
-import cv2
 from vision.process_markers import get_data 
 from threading import Thread 
 from time import sleep 
 import math
 from control.coordinator import SwarmCoordinator, BotState, BotCommand
+import ultralytics
+import supervision
+import torch
+import cv2
+from collections import defaultdict
+import supervision as sv
+from ultralytics import YOLO
 
 # ── these must match your actual camera + arena setup ─────────────────────────
 #1080p camera
@@ -51,9 +57,10 @@ class CornerData:
 
 
 if __name__ == "__main__":
+    model = YOLO('yolov8s.pt')
     corner_data = CornerData()
     coordinator = SwarmCoordinator(bot_ids=[1, 2, 3])
-    thread1 = Thread(target=get_data, args=(corner_data,))
+    thread1 = Thread(target=get_data, args=(corner_data,model))
     thread1.start()
 
     while True:
@@ -73,7 +80,7 @@ if __name__ == "__main__":
             for bot_id, cmd in commands.items():
                 print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")
 
-        print("----------------------")
+        #print("----------------------")
         sleep(0.067) 
         # print(corner_data.data)
         # print("----------------------")
