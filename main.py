@@ -6,12 +6,36 @@ from time import sleep
 import math
 from control.coordinator import SwarmCoordinator, BotState, BotCommand
 
+import socket
+
+# ── Bot IP addresses ───────────────────────────────────────────────────────────
+# Update these once each bot connects and prints its IP in Serial Monitor
+BOT_IPS = {
+    1: ("192.168.1.101", 5001),
+    2: ("192.168.1.102", 5002),
+    3: ("192.168.1.103", 5003),
+}
+
+
 # ── these must match your actual camera + arena setup ─────────────────────────
 #1080p camera
-IMAGE_WIDTH_PX  = 1280   # your camera resolution width
-IMAGE_HEIGHT_PX = 720    # your camera resolution height
-ARENA_WIDTH_M   = 3.0    # real arena width in metres
-ARENA_HEIGHT_M  = 2.0    # real arena height in metres
+IMAGE_WIDTH_PX  = 1920   # your camera resolution width
+IMAGE_HEIGHT_PX = 1080    # your camera resolution height
+ARENA_WIDTH_M   = 1.748    # real arena width in metres
+ARENA_HEIGHT_M  =  0.906 # real arena height in metres
+
+# create one UDP socket — reused for all bots
+udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def send_command(bot_id, cmd):
+    if bot_id not in BOT_IPS:
+        return
+    ip, port = BOT_IPS[bot_id]
+    payload  = f"L{cmd.left} R{cmd.right}\n".encode()
+    try:
+        udp_sock.sendto(payload, (ip, port))
+    except OSError as e:
+        print(f"UDP error bot {bot_id}: {e}")
 
 def corners_to_botstates(corner_data):
     """
@@ -25,8 +49,10 @@ def corners_to_botstates(corner_data):
         bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
 
         # unpack the 4 corners
-        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners[0]
-
+        try:
+            (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners[0]
+        except (ValueError, IndexError):
+            continue 
         # centre = average of all 4 corners
         cx = (x1 + x2 + x3 + x4) / 4
         cy = (y1 + y2 + y3 + y4) / 4
@@ -71,7 +97,8 @@ if __name__ == "__main__":
 
             # print them for now — later we'll send over UDP
             for bot_id, cmd in commands.items():
-                print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")
+                print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
+                send_command(bot_id, cmd)
 
         print("----------------------")
         sleep(0.067) 

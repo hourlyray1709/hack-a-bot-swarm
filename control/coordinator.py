@@ -5,12 +5,12 @@ from typing import Dict, List, Optional, Tuple
  
 # ── Arena ─────────────────────────────────────────────────────────────────────
 #1.72m x 0.88m
-ARENA_WIDTH_M  = 3.0   # metres left→right (start to goal)
-ARENA_HEIGHT_M = 2.0   # metres top→bottom
+ARENA_WIDTH_M  = 1.748  # metres left→right (start to goal)
+ARENA_HEIGHT_M = 0.906   # metres top→bottom
  
 # ── Formation ─────────────────────────────────────────────────────────────────
-PUSH_OFFSETS_Y  = [-0.20, 0.20]  # 2 pushers: 20cm above and below centre
-APPROACH_DIST_M = 0.18           # sit this far behind the trolley
+PUSH_OFFSETS_Y  = [-0.10, 0.10]  # 2 pushers: 20cm above and below centre
+APPROACH_DIST_M = 0.180          # sit this far behind the trolley
  
 # ── Guard ─────────────────────────────────────────────────────────────────────
 GUARD_LOOKAHEAD_M  = 0.60  # scan this far ahead of the trolley for obstacles
@@ -116,7 +116,8 @@ class SwarmCoordinator:
 
         return assignment
     
-    def _guard_target(self, trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> float:
+    @staticmethod
+    def _guard_target(trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> tuple[float,float]:
         tx, ty = trolley
 
         #get threats in front of the troller in the look ahead zone
@@ -127,7 +128,7 @@ class SwarmCoordinator:
 
         if threats:
             # Guard from the more central threats
-            target_obs = min(threats, lambda o: abs(o[1] - ARENA_HEIGHT_M /2))
+            target_obs = min(threats, key=lambda o: abs(o[1] - ARENA_HEIGHT_M /2))
 
              # drive slightly past it to push it clear
             return (target_obs[0] + 0.10, target_obs[1])
