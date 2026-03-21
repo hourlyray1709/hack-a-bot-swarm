@@ -4,8 +4,8 @@
 #include <WiFiUdp.h>
 
 #define BOT_ID      1              // CHANGE to 1, 2, or 3 per bot
-#define WIFI_SSID   "YourHotspot" // change to hackathon AP on the day
-#define WIFI_PASS   "YourPassword"
+#define WIFI_SSID   "TP-Link_6C24" // change to hackathon AP on the day
+#define WIFI_PASS   "17346559"
 #define LISTEN_PORT (5000 + BOT_ID)
 #define WATCHDOG_MS 500
 
