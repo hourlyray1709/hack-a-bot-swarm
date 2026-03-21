@@ -116,7 +116,7 @@ class SwarmCoordinator:
 
         return assignment
     
-    def _guard_target(trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> float:
+    def _guard_target(self, trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> float:
         tx, ty = trolley
 
         #get threats in front of the troller in the look ahead zone
