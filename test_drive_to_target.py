@@ -16,9 +16,10 @@ def stop():
     print("--- STOP ---")
     time.sleep(1)
 
-def drive_to_target(bot, target, label, duration=3.0):
+def drive_to_target(bot, target, label, duration=10.0):
     print(f"\n{label}")
-    start = time.time()
+    start = time.time()#
+
     while time.time() - start < duration:
         cmd = SwarmCoordinator._drive_to(bot, target)
         send(cmd)
@@ -26,19 +27,31 @@ def drive_to_target(bot, target, label, duration=3.0):
     stop()
 
 # bot starts at centre of arena facing right
-bot = BotState(id=1, x=0.8, y=0.5, heading=0.0)
+bot = BotState(id=1, x=0.3, y=0.45, heading=0.0)
+# diagonal up-right
+drive_to_target(bot, (1.4, 0.15), "Diagonal up-right")
+
+# diagonal down-right  
+drive_to_target(bot, (1.4, 0.75), "Diagonal down-right")
+
+# diagonal up-left
+drive_to_target(bot, (0.1, 0.15), "Diagonal up-left")
+
+# diagonal down-left
+drive_to_target(bot, (0.1, 0.75), "Diagonal down-left")
+
 
 # straight ahead — target is directly to the right
-drive_to_target(bot, (1.4, 0.5), "Straight ahead")
+drive_to_target(bot, (1.4, 10), "Straight ahead")
 
-# target above — bot needs to turn left
-drive_to_target(bot, (0.8, 0.1), "Turn left (target above)")
+# # target above — bot needs to turn left
+# drive_to_target(bot, (0.8, 0.1), "Turn left (target above)")
 
-# target below — bot needs to turn right
-drive_to_target(bot, (0.8, 0.9), "Turn right (target below)")
+# # target below — bot needs to turn right
+# drive_to_target(bot, (0.8, 0.9), "Turn right (target below)")
 
-# target behind — bot needs to reverse/spin
-drive_to_target(bot, (0.2, 0.5), "Behind (should spin)")
+# # target behind — bot needs to reverse/spin
+# drive_to_target(bot, (0.2, 0.5), "Behind (should spin)")
 
 print("\nAll done!")
 sock.close()
