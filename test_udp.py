@@ -1,7 +1,7 @@
 import socket
 import time
 
-BOT_IP   = "192.168.1.105"  # your bot's IP
+BOT_IP   = "192.168.0.102"  # your bot's IP
 BOT_PORT = 5001              # port for bot 1
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
