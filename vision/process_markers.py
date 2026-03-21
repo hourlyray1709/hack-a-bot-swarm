@@ -12,9 +12,9 @@ def get_heading(corner):
     pheta = np.acos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis)))
     return pheta 
 
-def get_data(corner_data):
+def get_data(corner_data, model):
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(1)
+    vc = cv2.VideoCapture(0)
 
     detectorParams = cv2.aruco.DetectorParameters()
     detectorDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -31,13 +31,28 @@ def get_data(corner_data):
         if ids is not None: 
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
 
+
+        # marker processing 
         data = [corner for corner in corners]
         corner_data.data = data 
         top_left_data = [data_i[0] for data_i in data]
         corner_data.top_left_data = top_left_data
         headings = [get_heading(data_i) for data_i in data]
         corner_data.headings = headings 
+
+        # object detection
+        clache = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray_frame = clache.apply(gray_frame)
+        gray_frame = cv2.merge([gray_frame, gray_frame, gray_frame])
+        od_results = model(gray_frame, conf=0.3)
+        od_annotation = od_results[0].plot()
+        canny_results = cv2.Canny(gray_frame, 50, 150, apertureSize=3)
+        cv2.imshow("Canny results", canny_results)
+
+
         cv2.imshow("preview", frame)
+        cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, frame = vc.read()
         key = cv2.waitKey(20)
