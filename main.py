@@ -87,6 +87,7 @@ if __name__ == "__main__":
 
             # convert raw corners to BotState objects
             bots = corners_to_botstates(corner_data.data)
+            print(f"Visible bots: {list(bots.keys())}")
 
             # for now no trolley or obstacles — we'll add those later
             trolley   = None
@@ -99,6 +100,8 @@ if __name__ == "__main__":
             for bot_id, cmd in commands.items():
                 print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
                 send_command(bot_id, cmd)
+
+            
 
         print("----------------------")
         sleep(0.067) 
