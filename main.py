@@ -7,12 +7,9 @@ from time import sleep
 class CornerData: 
     def __init__(self): 
         self.data = None 
+        self.top_left_data = None 
+        self.headings = None 
 
 corner_data = CornerData()
 thread1 = Thread(target=get_data, args=(corner_data,))
 thread1.start()
-
-while True: 
-    print(corner_data.data)
-    print("----------------------")
-    sleep(1)
