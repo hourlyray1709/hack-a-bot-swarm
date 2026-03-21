@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
  
  
 # ── Arena ─────────────────────────────────────────────────────────────────────
+#1.72m x 0.88m
 ARENA_WIDTH_M  = 3.0   # metres left→right (start to goal)
 ARENA_HEIGHT_M = 2.0   # metres top→bottom
  
@@ -115,7 +116,7 @@ class SwarmCoordinator:
 
         return assignment
     
-    def _guard_target(trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> float:
+    def _guard_target(self, trolley: tuple[float, float], obstacles: list[tuple[float,float]]) -> float:
         tx, ty = trolley
 
         #get threats in front of the troller in the look ahead zone
