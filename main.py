@@ -7,6 +7,7 @@ import math
 from control.coordinator import SwarmCoordinator, BotState, BotCommand
 
 # ── these must match your actual camera + arena setup ─────────────────────────
+#1080p camera
 IMAGE_WIDTH_PX  = 1280   # your camera resolution width
 IMAGE_HEIGHT_PX = 720    # your camera resolution height
 ARENA_WIDTH_M   = 3.0    # real arena width in metres
@@ -24,7 +25,7 @@ def corners_to_botstates(corner_data):
         bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
 
         # unpack the 4 corners
-        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners
+        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners[0]
 
         # centre = average of all 4 corners
         cx = (x1 + x2 + x3 + x4) / 4
@@ -48,9 +49,9 @@ class CornerData:
 
 if __name__ == "__main__":
     corner_data = CornerData()
+    coordinator = SwarmCoordinator(bot_ids=[1, 2, 3])
     thread1 = Thread(target=get_data, args=(corner_data,))
     thread1.start()
-    coordinator = SwarmCoordinator(bot_ids=[1, 2, 3])
 
     while True:
         if corner_data.data is not None and len(corner_data.data) > 0:
@@ -69,8 +70,8 @@ if __name__ == "__main__":
             for bot_id, cmd in commands.items():
                 print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")
 
-            print("----------------------")
-            sleep(0.067)   # ~15 times per second
+        print("----------------------")
+        sleep(0.067) 
         # print(corner_data.data)
         # print("----------------------")
         # sleep(1)

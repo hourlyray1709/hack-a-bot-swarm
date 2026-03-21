@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple
  
  
 # ── Arena ─────────────────────────────────────────────────────────────────────
+#1.72m x 0.88m
 ARENA_WIDTH_M  = 3.0   # metres left→right (start to goal)
 ARENA_HEIGHT_M = 2.0   # metres top→bottom
  
