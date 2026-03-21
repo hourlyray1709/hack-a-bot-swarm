@@ -25,8 +25,10 @@ def corners_to_botstates(corner_data):
         bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
 
         # unpack the 4 corners
-        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners[0]
-
+        try:
+            (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners[0]
+        except (ValueError, IndexError):
+            continue 
         # centre = average of all 4 corners
         cx = (x1 + x2 + x3 + x4) / 4
         cy = (y1 + y2 + y3 + y4) / 4
