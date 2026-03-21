@@ -8,10 +8,10 @@ from control.coordinator import SwarmCoordinator, BotState, BotCommand
 
 # ── these must match your actual camera + arena setup ─────────────────────────
 #1080p camera
-IMAGE_WIDTH_PX  = 1280   # your camera resolution width
-IMAGE_HEIGHT_PX = 720    # your camera resolution height
-ARENA_WIDTH_M   = 3.0    # real arena width in metres
-ARENA_HEIGHT_M  = 2.0    # real arena height in metres
+IMAGE_WIDTH_PX  = 1920   # your camera resolution width
+IMAGE_HEIGHT_PX = 1080    # your camera resolution height
+ARENA_WIDTH_M   = 1.748    # real arena width in metres
+ARENA_HEIGHT_M  =  0.906 # real arena height in metres
 
 def corners_to_botstates(corner_data):
     """
