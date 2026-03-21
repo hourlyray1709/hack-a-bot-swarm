@@ -29,6 +29,13 @@ class BotCommand:
     left: int #left motor speed
     right: int #right motor speed
 
+# Fake BotState — just for testing, same fields as the real one
+@dataclass
+class BotState:
+    id:      int
+    x:       float
+    y:       float
+    heading: float
 
 class SwarmCoordinator:
     def __init__(self, bot_ids: list):
@@ -63,3 +70,17 @@ class SwarmCoordinator:
 # outside the class — no indentation
 def _deadband(value, dead):
     return 0 if abs(value) < dead else value
+
+if __name__ == "__main__":
+    bot = BotState(id=1, x=0.5, y=1.0, heading=0.0)
+
+    tests = [
+        ((1.5, 1.0), "straight ahead"),
+        ((1.5, 0.6), "ahead and up"),
+        ((0.5, 1.0), "already there"),
+        ((0.2, 1.0), "behind the bot"),
+    ]
+
+    for target, description in tests:
+        cmd = SwarmCoordinator._drive_to(bot, target)
+        print(f"{description:20s}  ->  L={cmd.left:4d}  R={cmd.right:4d}")
