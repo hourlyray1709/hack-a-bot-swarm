@@ -1,0 +1,114 @@
+# the file we run when we connect to the camera 
+import cv2
+from vision.process_markers import get_data 
+from threading import Thread 
+from time import sleep 
+import math
+from coordinator import SwarmCoordinator, BotState, BotCommand
+
+# ── these must match your actual camera + arena setup ─────────────────────────
+IMAGE_WIDTH_PX  = 1280   # your camera resolution width
+IMAGE_HEIGHT_PX = 720    # your camera resolution height
+ARENA_WIDTH_M   = 3.0    # real arena width in metres
+ARENA_HEIGHT_M  = 2.0    # real arena height in metres
+
+def corners_to_botstates(corner_data):
+    """
+    Converts raw corner list into a dict of BotState objects.
+    corner_data is a list of 3 tuples, each with 4 (x,y) pixel coords.
+    Returns {1: BotState, 2: BotState, 3: BotState}
+    """
+    bots = {}
+
+    for i, corners in enumerate(corner_data):
+        bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
+
+        # unpack the 4 corners
+        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners
+
+        # centre = average of all 4 corners
+        cx = (x1 + x2 + x3 + x4) / 4
+        cy = (y1 + y2 + y3 + y4) / 4
+
+        # heading = direction from corner 0 to corner 1
+        heading = math.atan2(y2 - y1, x2 - x1)
+
+        # convert pixels to metres
+        mx = (cx / IMAGE_WIDTH_PX)  * ARENA_WIDTH_M
+        my = (cy / IMAGE_HEIGHT_PX) * ARENA_HEIGHT_M
+
+        bots[bot_id] = BotState(id=bot_id, x=mx, y=my, heading=heading)
+
+    return bots
+
+
+
+# ── these must match your actual camera + arena setup ─────────────────────────
+IMAGE_WIDTH_PX  = 1280   # your camera resolution width
+IMAGE_HEIGHT_PX = 720    # your camera resolution height
+ARENA_WIDTH_M   = 3.0    # real arena width in metres
+ARENA_HEIGHT_M  = 2.0    # real arena height in metres
+
+def corners_to_botstates(corner_data):
+    """
+    Converts raw corner list into a dict of BotState objects.
+    corner_data is a list of 3 tuples, each with 4 (x,y) pixel coords.
+    Returns {1: BotState, 2: BotState, 3: BotState}
+    """
+    bots = {}
+
+    for i, corners in enumerate(corner_data):
+        bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
+
+        # unpack the 4 corners
+        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corners
+
+        # centre = average of all 4 corners
+        cx = (x1 + x2 + x3 + x4) / 4
+        cy = (y1 + y2 + y3 + y4) / 4
+
+        # heading = direction from corner 0 to corner 1
+        heading = math.atan2(y2 - y1, x2 - x1)
+
+        # convert pixels to metres
+        mx = (cx / IMAGE_WIDTH_PX)  * ARENA_WIDTH_M
+        my = (cy / IMAGE_HEIGHT_PX) * ARENA_HEIGHT_M
+
+        bots[bot_id] = BotState(id=bot_id, x=mx, y=my, heading=heading)
+
+    return bots
+
+
+
+class CornerData: 
+    def __init__(self): 
+        self.data = None 
+
+if __name__ == "__main__":
+    corner_data = CornerData()
+    # thread1 = Thread(target=get_data, args=(corner_data,))
+    # thread1.start()
+    coordinator = SwarmCoordinator(bot_ids=[1, 2, 3])
+
+    #MAIN loop
+    while True:
+        if corner_data.data is not None and len(corner_data.data) > 0:
+
+            # convert raw corners to BotState objects
+            bots = corners_to_botstates(corner_data.data)
+
+            # for now no trolley or obstacles — we'll add those later
+            trolley   = None
+            obstacles = []
+
+            # get motor commands
+            commands = coordinator.compute_commands(bots, trolley, obstacles)
+
+            # print them for now — later we'll send over UDP
+            for bot_id, cmd in commands.items():
+                print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")
+
+        print("----------------------")
+        sleep(0.067)   # ~15 times per second
+
+    
