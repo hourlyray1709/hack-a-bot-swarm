@@ -14,21 +14,33 @@ def get_heading(corner):
 
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(0)
+    vc = cv2.VideoCapture(0) 
 
     detectorParams = cv2.aruco.DetectorParameters()
     detectorDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     detector = cv2.aruco.ArucoDetector(detectorDict, detectorParams)
-
+    fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=True, varThreshold=50)
 
     if vc.isOpened(): # try to get the first frame
         rval, frame = vc.read()
+        background = frame 
     else:
         rval = False
+    
+    # initialise background model
+    for _ in range(60):  # ~1 second of frames
+        ret, frame = vc.read()
+        fgbg.apply(frame, learningRate=1)
+
 
     while rval:                        # while we have camera input 
         corners, ids, rejected = detector.detectMarkers(frame)    # corners[i][0] = top left corner of marker i
-        if ids is not None: 
+        if ids is not None:
+            for i in range(len(ids)): 
+                if ids[i] == 4: 
+                    print("Target Hit")
+                    print(corners[i])
+                    corner_data.target = corners[i]
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
 
 
@@ -42,19 +54,20 @@ def get_data(corner_data, model):
 
         # object detection
         clache = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray_frame = fgbg.apply(frame, learningRate=0)
         gray_frame = clache.apply(gray_frame)
         gray_frame = cv2.merge([gray_frame, gray_frame, gray_frame])
         od_results = model(gray_frame, conf=0.3)
         od_annotation = od_results[0].plot()
         canny_results = cv2.Canny(gray_frame, 50, 150, apertureSize=3)
-        cv2.imshow("Canny results", canny_results)
+        #cv2.imshow("Canny results", canny_results)
 
 
         cv2.imshow("preview", frame)
         cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, frame = vc.read()
+        #frame = cv2.absdiff(frame, background)
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC
             break

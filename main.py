@@ -80,6 +80,7 @@ class CornerData:
         self.top_left_data = None 
         self.headings = None 
         self.ids = None 
+        self.target = None
 
 
 if __name__ == "__main__":
