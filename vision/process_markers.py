@@ -38,6 +38,7 @@ def get_data(corner_data):
         headings = [get_heading(data_i) for data_i in data]
         corner_data.headings = headings 
         cv2.imshow("preview", frame)
+        corner_data.ids = ids
         rval, frame = vc.read()
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC

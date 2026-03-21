@@ -9,6 +9,7 @@ class CornerData:
         self.data = None 
         self.top_left_data = None 
         self.headings = None 
+        self.ids = None 
 
 corner_data = CornerData()
 thread1 = Thread(target=get_data, args=(corner_data,))
