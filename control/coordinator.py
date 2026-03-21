@@ -5,8 +5,8 @@ from typing import Dict, List, Optional, Tuple
  
 # ── Arena ─────────────────────────────────────────────────────────────────────
 #1.72m x 0.88m
-ARENA_WIDTH_M  = 3.0   # metres left→right (start to goal)
-ARENA_HEIGHT_M = 2.0   # metres top→bottom
+ARENA_WIDTH_M  = 1.748  # metres left→right (start to goal)
+ARENA_HEIGHT_M = 0.906   # metres top→bottom
  
 # ── Formation ─────────────────────────────────────────────────────────────────
 PUSH_OFFSETS_Y  = [-0.10, 0.10]  # 2 pushers: 20cm above and below centre
