@@ -71,7 +71,8 @@ def corners_to_botstates(corner_data):
         #heading = math.atan2(y2 - y1, x2 - x1)
         heading = corner_data.headings[i]
 
-        
+        heading = -heading  # ← START WITH THIS
+
 
 
         # convert
