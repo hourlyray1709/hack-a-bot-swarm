@@ -18,9 +18,9 @@ import socket
 # ── Bot IP addresses ───────────────────────────────────────────────────────────
 # Update these once each bot connects and prints its IP in Serial Monitor
 BOT_IPS = {
-    1: ("192.168.1.101", 5001),
-    2: ("192.168.1.102", 5002),
-    3: ("192.168.1.103", 5003),
+    1: ("192.168.0.101", 5001),
+    2: ("192.168.0.102", 5002),
+    3: ("192.168.0.103", 5003),
 }
 
 
@@ -74,7 +74,8 @@ def corners_to_botstates(corner_data):
         
 
 
-        # convert pixels to metres
+        # convert
+        #  pixels to metres
         mx = (cx / IMAGE_WIDTH_PX)  * ARENA_WIDTH_M
         my = (cy / IMAGE_HEIGHT_PX) * ARENA_HEIGHT_M
 
