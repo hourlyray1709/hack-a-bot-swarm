@@ -18,9 +18,9 @@ import socket
 # ── Bot IP addresses ───────────────────────────────────────────────────────────
 # Update these once each bot connects and prints its IP in Serial Monitor
 BOT_IPS = {
-    1: ("192.168.1.101", 5001),
-    2: ("192.168.1.102", 5002),
-    3: ("192.168.1.103", 5003),
+    1: ("192.168.0.102", 5001),
+    2: ("192.168.0.103", 5002),
+    3: ("192.168.0.104", 5003),
 }
 
 
@@ -131,6 +131,11 @@ if __name__ == "__main__":
             for bot_id, cmd in commands.items():
                 print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
                 send_command(bot_id, cmd)
+            
+            for bot_key in bots.keys(): 
+                bot = bots[bot_key]
+                print(f"bot position {bot.x}, {bot.y}")
+            print(f"target position {corner_data.target[0][0], corner_data.target[0][1]}")
 
         sleep(1)    
         os.system("cls")
