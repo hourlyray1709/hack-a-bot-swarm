@@ -1,57 +1,95 @@
 import socket
 import time
-from control.coordinator import SwarmCoordinator, BotState
+import math
+from dataclasses import dataclass
 
-BOT_IP   = "192.168.0.102"
+# ---------- config ----------
+BOT_IP = "192.168.0.102"
 BOT_PORT = 5001
-sock     = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+DT = 0.067
 
-def send(cmd):
+ARENA_WIDTH_M = 1.748
+ARENA_HEIGHT_M = 0.906
+ARRIVE_THRESH_M = 0.06
+
+MAX_SPEED = 220
+MIN_SPEED = 40
+KP_DIST = 1.0
+KP_SIDE = 180.0   # steering from lateral error (tune 120..260)
+# ---------------------------
+
+@dataclass
+class BotCommand:
+    left: int
+    right: int
+
+@dataclass
+class BotState:
+    x: float
+    y: float
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def clamp_target(x, y):
+    x = max(0.05, min(ARENA_WIDTH_M - 0.05, x))
+    y = max(0.05, min(ARENA_HEIGHT_M - 0.05, y))
+    return x, y
+
+def sat(v, lo, hi):
+    return max(lo, min(hi, v))
+
+def deadband(v, d):
+    return 0 if abs(v) < d else v
+
+def send_cmd(cmd: BotCommand):
     payload = f"L{cmd.left} R{cmd.right}\n".encode()
     sock.sendto(payload, (BOT_IP, BOT_PORT))
-    print(f"L={cmd.left:4d}  R={cmd.right:4d}")
+    print(payload.decode().strip())
 
 def stop():
     sock.sendto(b"L0 R0\n", (BOT_IP, BOT_PORT))
-    print("--- STOP ---")
-    time.sleep(1)
+    print("L0 R0")
 
-def drive_to_target(bot, target, label, duration=10.0):
-    print(f"\n{label}")
-    start = time.time()#
+def get_latest_bot_state() -> BotState:
+    # TODO: replace with real tracker each cycle
+    # must return UPDATED x,y
+    return BotState(x=0.8, y=0.5)
 
-    while time.time() - start < duration:
-        cmd = SwarmCoordinator._drive_to(bot, target)
-        send(cmd)
-        time.sleep(0.067)
-    stop()
+def drive_no_heading(bot: BotState, target):
+    tx, ty = clamp_target(*target)
+    dx, dy = tx - bot.x, ty - bot.y
+    dist = math.hypot(dx, dy)
 
-# bot starts at centre of arena facing right
-bot = BotState(id=1, x=0.3, y=0.45, heading=0.0)
-# diagonal up-right
-drive_to_target(bot, (1.4, 0.15), "Diagonal up-right")
+    if dist < ARRIVE_THRESH_M:
+        return BotCommand(0, 0), dist
 
-# diagonal down-right  
-drive_to_target(bot, (1.4, 0.75), "Diagonal down-right")
+    # forward speed from distance
+    fwd = int(sat(KP_DIST * dist * MAX_SPEED, MIN_SPEED, MAX_SPEED))
 
-# diagonal up-left
-drive_to_target(bot, (0.1, 0.15), "Diagonal up-left")
+    # lateral steering using world-frame y error
+    steer = int(sat(KP_SIDE * dy, -MAX_SPEED, MAX_SPEED))
 
-# diagonal down-left
-drive_to_target(bot, (0.1, 0.75), "Diagonal down-left")
+    left = int(sat(fwd - steer, -MAX_SPEED, MAX_SPEED))
+    right = int(sat(fwd + steer, -MAX_SPEED, MAX_SPEED))
 
+    left = deadband(left, MIN_SPEED)
+    right = deadband(right, MIN_SPEED)
+    return BotCommand(left, right), dist
 
-# straight ahead — target is directly to the right
-drive_to_target(bot, (1.4, 10), "Straight ahead")
+def run_to_target(target):
+    try:
+        while True:
+            bot = get_latest_bot_state()
+            cmd, dist = drive_no_heading(bot, target)
+            send_cmd(cmd)
 
-# # target above — bot needs to turn left
-# drive_to_target(bot, (0.8, 0.1), "Turn left (target above)")
+            if dist < ARRIVE_THRESH_M:
+                break
 
-# # target below — bot needs to turn right
-# drive_to_target(bot, (0.8, 0.9), "Turn right (target below)")
+            time.sleep(DT)
+    finally:
+        stop()
+        sock.close()
 
-# # target behind — bot needs to reverse/spin
-# drive_to_target(bot, (0.2, 0.5), "Behind (should spin)")
-
-print("\nAll done!")
-sock.close()
+if __name__ == "__main__":
+    run_to_target((1.4, 0))  # diagonal target

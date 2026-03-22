@@ -10,7 +10,7 @@ import sys
  
 BOT_IP   = "192.168.0.102"  # your bot's IP
 BOT_PORT = 5001              # port for bot 1
-SPEED    = 150               # 0-255, change this to go faster or slower
+SPEED    = 255               # 0-255, change this to go faster or slower
  
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
  
@@ -49,11 +49,11 @@ if sys.platform == "win32":
  
                 elif arrow == b'K':  # left arrow
                     print("Spin left")
-                    send(-SPEED, SPEED)
+                    send(-abs(SPEED / 2), SPEED / 2)
  
                 elif arrow == b'M':  # right arrow
                     print("Spin right")
-                    send(SPEED, -SPEED)
+                    send(SPEED / 2, -abs(SPEED / 2))
  
             else:
                 # any other key = stop
