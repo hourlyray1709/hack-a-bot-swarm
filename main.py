@@ -25,8 +25,8 @@ BOT_IPS = {
 
 # ── these must match your actual camera + arena setup ─────────────────────────
 #1080p camera
-IMAGE_WIDTH_PX  = 1920   # your camera resolution width
-IMAGE_HEIGHT_PX = 1080    # your camera resolution height
+IMAGE_WIDTH_PX  = 640   # your camera resolution width
+IMAGE_HEIGHT_PX = 480    # your camera resolution height
 ARENA_WIDTH_M   = 1.748    # real arena width in metres
 ARENA_HEIGHT_M  =  0.906 # real arena height in metres
 
@@ -51,6 +51,9 @@ def corners_to_botstates(corner_data):
     """
     bots = {}
 
+    if corner_data.data is None or corner_data.headings is None:
+        return bots
+    
     for i, corners in enumerate(corner_data):
         bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
 
@@ -64,7 +67,11 @@ def corners_to_botstates(corner_data):
         cy = (y1 + y2 + y3 + y4) / 4
 
         # heading = direction from corner 0 to corner 1
-        heading = math.atan2(y2 - y1, x2 - x1)
+        #heading = math.atan2(y2 - y1, x2 - x1)
+        heading = corner_data.headings[i]
+
+        
+
 
         # convert pixels to metres
         mx = (cx / IMAGE_WIDTH_PX)  * ARENA_WIDTH_M
@@ -73,6 +80,21 @@ def corners_to_botstates(corner_data):
         bots[bot_id] = BotState(id=bot_id, x=mx, y=my, heading=heading)
 
     return bots
+
+
+def corners_to_trolley(corner_data):
+    if not hasattr(corner_data, 'target') or corner_data.target is None:
+        return None
+    try:
+        (x1,y1), (x2,y2), (x3,y3), (x4,y4) = corner_data.target[0]
+    except (ValueError, IndexError):
+        return None
+
+    cx = (x1 + x2 + x3 + x4) / 4
+    cy = (y1 + y2 + y3 + y4) / 4
+    mx = (cx / IMAGE_WIDTH_PX) * ARENA_WIDTH_M
+    my = (cy / IMAGE_HEIGHT_PX) * ARENA_HEIGHT_M
+    return (mx, my)
 
 class CornerData: 
     def __init__(self): 
@@ -98,7 +120,7 @@ if __name__ == "__main__":
             print(f"Visible bots: {list(bots.keys())}")
 
             # for now no trolley or obstacles — we'll add those later
-            trolley   = None
+            trolley   = corners_to_trolley(corner_data.target)
             obstacles = []
 
             # get motor commands
