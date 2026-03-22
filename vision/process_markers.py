@@ -11,16 +11,12 @@ def load_calibration(path="camera_calibration.pkl"):
 
 def get_heading(corner): 
     _corner = corner[0]
-    top_left = np.array(_corner[0])
+    top_left  = np.array(_corner[0])
     top_right = np.array(_corner[1])
-    bottom_right = np.array(_corner[2])
-    bottom_left = np.array(_corner[3])
-    heading_vector = top_left - bottom_right
-    axis = np.array([0,-1])
-    pheta = np.arccos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis))) - np.pi / 4
-    if pheta < 0: 
-        pheta = 2* np.pi + pheta 
-    return pheta 
+
+    heading_vector = top_right - top_left
+    heading = np.arctan2(heading_vector[1], heading_vector[0])
+    return heading
 
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
