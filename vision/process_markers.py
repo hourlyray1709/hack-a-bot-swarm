@@ -17,7 +17,7 @@ def get_heading(corner):
     bottom_left = np.array(_corner[3])
     heading_vector = top_left - bottom_right
     axis = np.array([0,-1])
-    pheta = np.acos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis)))
+    pheta = np.acos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis))) - np.pi / 4
     return pheta 
 
 def get_data(corner_data, model):
@@ -77,7 +77,7 @@ def get_data(corner_data, model):
 
 
         cv2.imshow("preview", frame)
-        cv2.imshow("yolov8frame", od_annotation)
+        #cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, frame = vc.read()
         frame = cv2.undistort(frame, mtx, dist, None)

@@ -11,6 +11,7 @@ import cv2
 from collections import defaultdict
 import supervision as sv
 from ultralytics import YOLO
+import os 
 
 import socket
 
@@ -54,7 +55,7 @@ def corners_to_botstates(corner_data):
     if corner_data.data is None or corner_data.headings is None:
         return bots
     
-    for i, corners in enumerate(corner_data):
+    for i, corners in enumerate(corner_data.data):
         bot_id = i + 1   # list index 0 = bot 1, index 1 = bot 2 etc.
 
         # unpack the 4 corners
@@ -116,7 +117,7 @@ if __name__ == "__main__":
         if corner_data.data is not None and len(corner_data.data) > 0:
 
             # convert raw corners to BotState objects
-            bots = corners_to_botstates(corner_data.data)
+            bots = corners_to_botstates(corner_data)
             print(f"Visible bots: {list(bots.keys())}")
 
             # for now no trolley or obstacles — we'll add those later
@@ -131,10 +132,8 @@ if __name__ == "__main__":
                 print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
                 send_command(bot_id, cmd)
 
-            
-
-        print("----------------------")
-        sleep(0.067) 
+        sleep(1)    
+        os.system("cls")
         # print(corner_data.data)
         # print("----------------------")
         # sleep(1)
