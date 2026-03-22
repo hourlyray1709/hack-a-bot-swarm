@@ -89,6 +89,7 @@ def get_data(corner_data, model):
         cv2.imshow("preview", frame)
         corner_data.ids = ids
         rval, rawframe = vc.read()
+        frame = rawframe
         #frame = cv2.undistort(rawframe, mtx, dist, None)
         #frame = cv2.absdiff(frame, background)
         key = cv2.waitKey(20)
