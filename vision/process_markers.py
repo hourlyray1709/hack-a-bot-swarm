@@ -17,7 +17,7 @@ def get_heading(corner):
     bottom_left = np.array(_corner[3])
     heading_vector = top_left - bottom_right
     axis = np.array([0,-1])
-    pheta = np.acos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis))) - np.pi / 4
+    pheta = np.arccos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis))) - np.pi / 4
     return pheta 
 
 def get_data(corner_data, model):

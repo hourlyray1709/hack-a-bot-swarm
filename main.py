@@ -125,6 +125,9 @@ if __name__ == "__main__":
             trolley   = corners_to_trolley(corner_data.target)
             obstacles = []
 
+            for bot_id, bot in bots.items():
+                print(f"x={bot.x:.3f}  y={bot.y:.3f}  heading={bot.heading:.2f} rad  ({math.degrees(bot.heading):.1f} deg)")
+
             # get motor commands
             commands = coordinator.compute_commands(bots, trolley, obstacles)
 
