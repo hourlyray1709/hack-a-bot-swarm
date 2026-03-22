@@ -22,7 +22,7 @@ def get_heading(corner):
 
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(0)
+    vc = cv2.VideoCapture(1)
     vc.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     vc.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) 
 
