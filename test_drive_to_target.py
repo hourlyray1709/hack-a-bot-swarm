@@ -16,7 +16,7 @@ def stop():
     print("--- STOP ---")
     time.sleep(1)
 
-def drive_to_target(bot, target, label, duration=10.0):
+def drive_to_target(bot, target, label, duration=100.0):
     print(f"\n{label}")
     start = time.time()#
 
@@ -32,7 +32,7 @@ bot = BotState(id=1, x=0, y=0, heading=0.0)
 # diagonal up-right
 x = bot.x 
 y = bot.y
-drive_to_target(bot, (x+1, y-1), "Diagonal up-right")
+drive_to_target(bot, (0, -1), "Diagonal up-right")
 
 # # diagonal down-right  
 # x = bot.x 

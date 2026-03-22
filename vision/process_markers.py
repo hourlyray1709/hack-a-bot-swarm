@@ -45,12 +45,11 @@ def get_data(corner_data, model):
     while rval:                        # while we have camera input 
         corners, ids, rejected = detector.detectMarkers(frame)    # corners[i][0] = top left corner of marker i
         if ids is not None:
-            #for i in range(len(ids)): 
-                #if ids[i] == 4: 
-                    #print("Target Hit")
-                    #print(corners[i])
-                    #corner_data.target = corners[i]
-            corner_data.target=[[0.8, 0.45], [0.8, 0.45], [0.8, 0.45], [0.8, 0.45]]
+            for i in range(len(ids)): 
+                if ids[i] == 2: 
+                    print("Target Hit")
+                    print(corners[i])
+                    corner_data.target = corners[i]
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
 
 
@@ -63,7 +62,7 @@ def get_data(corner_data, model):
         corner_data.headings = headings 
 
         # object detection
-        od_results = model(frame, conf=0.3)
+        od_results = model(frame, conf=0.3, verbose=False)
         od_annotation = od_results[0].plot()
 
         #cv2.imshow("Canny results", canny_results)
@@ -73,7 +72,8 @@ def get_data(corner_data, model):
         cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, rawframe = vc.read()
-        frame = cv2.undistort(rawframe, mtx, dist, None)
+        frame = rawframe
+        #frame = cv2.undistort(rawframe, mtx, dist, None)
         #frame = cv2.absdiff(frame, background)
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC

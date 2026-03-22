@@ -132,16 +132,17 @@ if __name__ == "__main__":
             commands = coordinator.compute_commands(bots, trolley, obstacles)
 
             # print them for now — later we'll send over UDP
-            for bot_id, cmd in commands.items():
-                print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
-                send_command(bot_id, cmd)
-            
+            #for bot_id, cmd in commands.items():
+            #    print(f"Bot {bot_id}  ->  L={cmd.left:4d}  R={cmd.right:4d}")  # keep for debug
+            #    send_command(bot_id, cmd)
+            target = trolley[0]
             for bot_key in bots.keys(): 
                 bot = bots[bot_key]
                 print(f"bot position {bot.x}, {bot.y}")
-            print(f"target position {corner_data.target[0][0], corner_data.target[0][1]}")
-        print("--------")
-        sleep(0.5)    
+            if target is not None:
+                print(f"target position {corner_data.target[0][0], corner_data.target[0][1]}")
+        sleep(0.5)
+        print("-------")    
         #os.system("cls")
         # print(corner_data.data)
         # print("----------------------")

@@ -69,14 +69,7 @@ class SwarmCoordinator:
         left  = int(base_speed - turn)
         right = int(base_speed + turn)
 
-        # RYAN CHANGES
-
-        left  = _deadband(max(-MAX_SPEED, min(MAX_SPEED, left)),  MIN_SPEED)
-        right = _deadband(max(-MAX_SPEED, min(MAX_SPEED, right)), MIN_SPEED)
-
-        left_v = (left / MAX_SPEED) * (CAR_SPEED * 0.5)
-        right_v = (right / MAX_SPEED) * (CAR_SPEED * 0.5)
-        omega = (right_v - left_v) / 0.08           # wheel base is 0.08m
+        bot.heading += turn 
 
         return BotCommand(left=left, right=right)
     
@@ -167,54 +160,61 @@ class SwarmCoordinator:
         return (tx, ty)
 
     def compute_commands(
-            self,
-            bots: Dict[int, BotState],
-            trolley: Optional[Tuple[float,float]],
-            obstacles: List[Tuple[float,float]]
-            ) -> Dict[int, BotCommand]:
+             self,
+             bots: Dict[int, BotState],
+             trolley: Optional[Tuple[float,float]],
+             obstacles: List[Tuple[float,float]]
+             ) -> Dict[int, BotCommand]:
         
-        commands = {
-            b_id: BotCommand(left=0, right= 0)
-            for b_id in self.bot_ids
-        }
-
-        if not bots:
-            return commands
-        
-        if trolley is None:
-            trolley = (ARENA_WIDTH_M / 2, ARENA_HEIGHT_M / 2)
-
-        # highest bot ID is the guard, rest are pushers
-        pusher_ids = sorted(bots.keys())[:-1]
-        guard_id   = sorted(bots.keys())[-1]
- 
-        # get pusher slot positions
-        positions = self._formation_positions(trolley)
- 
-        # assign pushers to slots
-        pusher_bots = {
-            bid: bots[bid] for bid in pusher_ids if bid in bots
-        }
-        assignment = self._assign_bots_positions(pusher_bots, positions)
-
-        # compute pusher commands
-        for bot_id, target in assignment.items():
-            bot         = bots[bot_id]
-            safe_target = self._avoid_obstacles(
-                (bot.x, bot.y), target, obstacles
-            )
-            commands[bot_id] = self._drive_to(bot, safe_target)
- 
-        # compute guard command
-        if guard_id in bots:
-            guard_bot    = bots[guard_id]
-            guard_target = self._guard_target(trolley, obstacles)
-            safe_guard   = self._avoid_obstacles(
-                (guard_bot.x, guard_bot.y), guard_target, obstacles
-            )
-            commands[guard_id] = self._drive_to(guard_bot, safe_guard)
- 
+        commands = {}
+        for i in bots.keys(): 
+            bot = bots[i]
+            if trolley is not None:
+                cmd = SwarmCoordinator._drive_to(bot, trolley)
+                commands[i] = cmd 
         return commands
+        # commands = {
+        #     b_id: BotCommand(left=0, right= 0)
+        #     for b_id in self.bot_ids
+        # }
+
+        # if not bots:
+        #     return commands
+        
+        # if trolley is None:
+        #     trolley = (ARENA_WIDTH_M / 2, ARENA_HEIGHT_M / 2)
+
+        # # highest bot ID is the guard, rest are pushers
+        # pusher_ids = sorted(bots.keys())[:-1]
+        # guard_id   = sorted(bots.keys())[-1]
+ 
+        # # get pusher slot positions
+        # positions = self._formation_positions(trolley)
+ 
+        # # assign pushers to slots
+        # pusher_bots = {
+        #     bid: bots[bid] for bid in pusher_ids if bid in bots
+        # }
+        # assignment = self._assign_bots_positions(pusher_bots, positions)
+
+        # # compute pusher commands
+        # for bot_id, target in assignment.items():
+        #     bot         = bots[bot_id]
+        #     safe_target = self._avoid_obstacles(
+        #         (bot.x, bot.y), target, obstacles
+        #     )
+        #     commands[bot_id] = self._drive_to(bot, safe_target)
+ 
+        # # compute guard command
+        # if guard_id in bots:
+        #     guard_bot    = bots[guard_id]
+        #     guard_target = self._guard_target(trolley, obstacles)
+        #     safe_guard   = self._avoid_obstacles(
+        #         (guard_bot.x, guard_bot.y), guard_target, obstacles
+        #     )
+        #     commands[guard_id] = self._drive_to(guard_bot, safe_guard)
+
+        #return commands
         
     
         
