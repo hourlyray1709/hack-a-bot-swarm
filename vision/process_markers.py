@@ -18,6 +18,8 @@ def get_heading(corner):
     heading_vector = top_left - bottom_right
     axis = np.array([0,-1])
     pheta = np.arccos(np.dot(heading_vector, axis) / (np.linalg.norm(heading_vector) * np.linalg.norm(axis))) - np.pi / 4
+    if pheta < 0: 
+        pheta = 2* np.pi + pheta 
     return pheta 
 
 def get_data(corner_data, model):
@@ -31,7 +33,6 @@ def get_data(corner_data, model):
     detectorParams = cv2.aruco.DetectorParameters()
     detectorDict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     detector = cv2.aruco.ArucoDetector(detectorDict, detectorParams)
-    fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=True, varThreshold=50)
 
     if vc.isOpened(): # try to get the first frame
         rval, frame = vc.read()
@@ -39,10 +40,6 @@ def get_data(corner_data, model):
     else:
         rval = False
     
-    # initialise background model
-    for _ in range(60):  # ~1 second of frames
-        ret, frame = vc.read()
-        fgbg.apply(frame, learningRate=1)
 
 
     while rval:                        # while we have camera input 
@@ -66,21 +63,17 @@ def get_data(corner_data, model):
         corner_data.headings = headings 
 
         # object detection
-        clache = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-        gray_frame = fgbg.apply(frame, learningRate=0)
-        gray_frame = clache.apply(gray_frame)
-        gray_frame = cv2.merge([gray_frame, gray_frame, gray_frame])
-        od_results = model(gray_frame, conf=0.3)
+        od_results = model(frame, conf=0.3)
         od_annotation = od_results[0].plot()
-        canny_results = cv2.Canny(gray_frame, 50, 150, apertureSize=3)
+
         #cv2.imshow("Canny results", canny_results)
 
 
         cv2.imshow("preview", frame)
-        #cv2.imshow("yolov8frame", od_annotation)
+        cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
-        rval, frame = vc.read()
-        frame = cv2.undistort(frame, mtx, dist, None)
+        rval, rawframe = vc.read()
+        frame = cv2.undistort(rawframe, mtx, dist, None)
         #frame = cv2.absdiff(frame, background)
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC
