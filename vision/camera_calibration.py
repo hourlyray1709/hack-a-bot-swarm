@@ -50,7 +50,9 @@ while rval:
         cv.drawChessboardCorners(frame, (checker_coords[0], checker_coords[1]), corners2, ret)
         cv.imshow('Test Calibration', frame)
         print(f"captured {counter} out of {frames_to_capture}")
+        print("Press space to continue")
         sleep(1)
+        key=cv.waitKey(0)
     key = cv.waitKey(20)
     if key == 27: # exit on ESC
         break
