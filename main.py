@@ -120,7 +120,7 @@ if __name__ == "__main__":
             print(f"Visible bots: {list(bots.keys())}")
 
             # for now no trolley or obstacles — we'll add those later
-            trolley   = corners_to_trolley(corner_data)
+            trolley   = corners_to_trolley(corner_data.target)
             obstacles = []
 
             # get motor commands
