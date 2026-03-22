@@ -59,14 +59,34 @@ def get_data(corner_data, model):
         corner_data.headings = headings 
 
         # object detection
-        od_results = model(frame, conf=0.3)
-        od_annotation = od_results[0].plot()
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray_frame, (5,5), 0)
+        edges = cv2.Canny(blur, 50, 150)
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            area = cv2.contourArea(cnt)
+            if area < 2000:  # filter noise
+                continue
+
+            # 5. Approximate shape
+            epsilon = 0.02 * cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, epsilon, True)
+
+            # 6. Check for quadrilateral
+            if len(approx) < 7:
+                # Optional: check aspect ratio (square-ish)
+                x, y, w, h = cv2.boundingRect(approx)
+                aspect_ratio = w / float(h)
+
+                cv2.drawContours(frame, [approx], -1, (0, 255, 0), 3)
+                cv2.putText(frame, "Paper", (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
         #cv2.imshow("Canny results", canny_results)
 
 
         cv2.imshow("preview", frame)
-        cv2.imshow("yolov8frame", od_annotation)
         corner_data.ids = ids
         rval, rawframe = vc.read()
         frame = cv2.undistort(rawframe, mtx, dist, None)
