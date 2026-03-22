@@ -27,22 +27,31 @@ def drive_to_target(bot, target, label, duration=10.0):
     stop()
 
 # bot starts at centre of arena facing right
-bot = BotState(id=1, x=0.3, y=0.45, heading=0.0)
+bot = BotState(id=1, x=0, y=0, heading=0.0)
+
 # diagonal up-right
-drive_to_target(bot, (1.4, 0.15), "Diagonal up-right")
+x = bot.x 
+y = bot.y
+drive_to_target(bot, (x+1, y-1), "Diagonal up-right")
 
-# diagonal down-right  
-drive_to_target(bot, (1.4, 0.75), "Diagonal down-right")
+# # diagonal down-right  
+# x = bot.x 
+# y = bot.y
+# drive_to_target(bot, (x+1, y+1), "Diagonal down-right")
 
-# diagonal up-left
-drive_to_target(bot, (0.1, 0.15), "Diagonal up-left")
+# # diagonal up-left
+# x = bot.x 
+# y = bot.y
+# drive_to_target(bot, (x-1, y-1), "Diagonal up-left")
 
-# diagonal down-left
-drive_to_target(bot, (0.1, 0.75), "Diagonal down-left")
+# # diagonal down-left
+# x = bot.x 
+# y = bot.y
+# drive_to_target(bot, (x-1, y+1), "Diagonal down-left")
 
 
-# straight ahead — target is directly to the right
-drive_to_target(bot, (1.4, 10), "Straight ahead")
+# # straight ahead — target is directly to the right
+# drive_to_target(bot, (1.4, 10), "Straight ahead")
 
 # # target above — bot needs to turn left
 # drive_to_target(bot, (0.8, 0.1), "Turn left (target above)")

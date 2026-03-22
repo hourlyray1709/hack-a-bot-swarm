@@ -1,6 +1,7 @@
 import math
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
+import numpy as np 
  
  
 # ── Arena ─────────────────────────────────────────────────────────────────────
@@ -49,6 +50,7 @@ class SwarmCoordinator:
 
     @staticmethod
     def _drive_to(bot, target):
+        CAR_SPEED = 100 
         dx = target[0] - bot.x
         dy = target[1] - bot.y
         dist = math.hypot(dx, dy)
@@ -67,8 +69,14 @@ class SwarmCoordinator:
         left  = int(base_speed - turn)
         right = int(base_speed + turn)
 
+        # RYAN CHANGES
+
         left  = _deadband(max(-MAX_SPEED, min(MAX_SPEED, left)),  MIN_SPEED)
         right = _deadband(max(-MAX_SPEED, min(MAX_SPEED, right)), MIN_SPEED)
+
+        left_v = (left / MAX_SPEED) * (CAR_SPEED * 0.5)
+        right_v = (right / MAX_SPEED) * (CAR_SPEED * 0.5)
+        omega = (right_v - left_v) / 0.08           # wheel base is 0.08m
 
         return BotCommand(left=left, right=right)
     
