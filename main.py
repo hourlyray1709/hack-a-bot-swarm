@@ -74,7 +74,8 @@ def corners_to_botstates(corner_data):
         
 
 
-        # convert pixels to metres
+        # convert
+        #  pixels to metres
         mx = (cx / IMAGE_WIDTH_PX)  * ARENA_WIDTH_M
         my = (cy / IMAGE_HEIGHT_PX) * ARENA_HEIGHT_M
 
@@ -123,6 +124,9 @@ if __name__ == "__main__":
             # for now no trolley or obstacles — we'll add those later
             trolley   = corners_to_trolley(corner_data.target)
             obstacles = []
+
+            for bot_id, bot in bots.items():
+                print(f"x={bot.x:.3f}  y={bot.y:.3f}  heading={bot.heading:.2f} rad  ({math.degrees(bot.heading):.1f} deg)")
 
             # get motor commands
             commands = coordinator.compute_commands(bots, trolley, obstacles)
