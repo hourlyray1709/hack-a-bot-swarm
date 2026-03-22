@@ -6,7 +6,7 @@ import pickle
 
 frames_to_capture = 60 
 counter = 0 
-camera_index = 1
+camera_index = 0
  # 0 for webcam, 1 for arena cam 
  
 # termination criteria

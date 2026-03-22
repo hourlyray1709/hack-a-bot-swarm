@@ -22,7 +22,7 @@ def get_heading(corner):
 
 def get_data(corner_data, model):
     cv2.namedWindow("preview")
-    vc = cv2.VideoCapture(1)
+    vc = cv2.VideoCapture(0)
     vc.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     vc.set(cv2.CAP_PROP_FRAME_HEIGHT, 480) 
 
@@ -53,7 +53,7 @@ def get_data(corner_data, model):
                     #print("Target Hit")
                     #print(corners[i])
                     #corner_data.target = corners[i]
-            corner_data.target=[[400, 400], [400, 400], [400, 400], [400, 400]]
+            corner_data.target=[[0.8, 0.45], [0.8, 0.45], [0.8, 0.45], [0.8, 0.45]]
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
 
 

@@ -11,7 +11,7 @@ with open("camera_calibration.pkl", "rb") as f:
     print(mtx)
     print(dist)
 
-camera_index = 1
+camera_index = 0
 cv.namedWindow("Undistorted")
 vc = cv.VideoCapture(camera_index)
 if vc.isOpened(): 
