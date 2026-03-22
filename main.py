@@ -136,9 +136,9 @@ if __name__ == "__main__":
                 bot = bots[bot_key]
                 print(f"bot position {bot.x}, {bot.y}")
             print(f"target position {corner_data.target[0][0], corner_data.target[0][1]}")
-
-        sleep(1)    
-        os.system("cls")
+        print("--------")
+        sleep(0.5)    
+        #os.system("cls")
         # print(corner_data.data)
         # print("----------------------")
         # sleep(1)
