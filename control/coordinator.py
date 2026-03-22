@@ -56,7 +56,7 @@ class SwarmCoordinator:
         if dist < ARRIVE_THRESH_M:
             return BotCommand(left=0, right=0)
 
-        target_heading = math.atan2(dy, dx)
+        target_heading = math.atan2(dy, dx) - math.pi / 2
         heading_err = target_heading - bot.heading
         heading_err = (heading_err + math.pi) % (2 * math.pi) - math.pi
 
